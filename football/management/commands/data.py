@@ -15,7 +15,7 @@ class Command(BaseCommand):
         # Referee.objects.all().delete()
         # Match.objects.all().delete()
 
-        match = Match.objects.all()
+        match = Match.objects.order_by("id")[:2]
         pp = pprint.PrettyPrinter(indent=4)
         for data in match:
             pp.pprint(data.__dict__)

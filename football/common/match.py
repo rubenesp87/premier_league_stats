@@ -3,10 +3,7 @@ from football.common.helpers import format_date
 
 
 def get_or_create_match_stats(row):
-    match, created = Match.objects.get_or_create(
-        date=format_date(row[1]),
-        home_team=row[2],
-        away_team=row[3],
+    defaults = dict(
         full_time_home_goals=row[4],
         full_time_away_goals=row[5],
         full_time_result=row[6],
@@ -27,4 +24,12 @@ def get_or_create_match_stats(row):
         home_team_red_cards=row[21],
         away_team_red_cards=row[22],
     )
+
+    match, created = Match.objects.get_or_create(
+        date=format_date(row[1]),
+        home_team=row[2],
+        away_team=row[3],
+        defaults=defaults,
+    )
+
     return match, created

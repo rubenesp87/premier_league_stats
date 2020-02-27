@@ -7,6 +7,19 @@ from football.common.match import get_or_create_match_stats
 from football.common.referee import get_or_create_referee_stats
 from football.models import Totals
 
+CSV_FILES = [
+    "football/data/2010.csv",
+    "football/data/2011.csv",
+    "football/data/2012.csv",
+    "football/data/2013.csv",
+    "football/data/2014.csv",
+    "football/data/2015.csv",
+    "football/data/2016.csv",
+    "football/data/2017.csv",
+    "football/data/2018.csv",
+    "football/data/2019.csv",
+]
+
 
 class Command(BaseCommand):
     help = 'Populate football data'
@@ -74,23 +87,29 @@ class Command(BaseCommand):
         super(Command, self).__init__(*args, **kwargs)
 
     def handle(self, *args, **options):
-        path = os.path.join(settings.BASE_DIR, "football/data/2010.csv")
-        with open(path) as f:
-            reader = csv.reader(f)
+        try:
+            for file in CSV_FILES:
+                print("Importing: " + file)
+                path = os.path.join(settings.BASE_DIR, file)
+                with open(path) as f:
+                    reader = csv.reader(f)
 
-            if not valid_legend(next(reader)):
-                raise Exception()
+                    if not valid_legend(next(reader)):
+                        raise Exception()
 
-            for row in reader:
-                self.get_total_goals(row)
-                self.get_total_shots(row)
-                self.get_total_fouls_commited(row)
-                self.get_total_corners(row)
-                self.get_total_cards(row)
-                match, match_created = get_or_create_match_stats(row)
-                if match_created:
-                    self.get_or_create_total_stats(row, match)
-                    get_or_create_referee_stats(row)
+                    for row in reader:
+                        self.get_total_goals(row)
+                        self.get_total_shots(row)
+                        self.get_total_fouls_commited(row)
+                        self.get_total_corners(row)
+                        self.get_total_cards(row)
+                        match, match_created = get_or_create_match_stats(row)
+                        if match_created:
+                            self.get_or_create_total_stats(row, match)
+                            get_or_create_referee_stats(row)
+        except Exception as e:
+            print(e)
+            print(row)
 
     def get_total_goals(self, row):
         # Total goals team
