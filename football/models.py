@@ -93,6 +93,22 @@ class Totals(models.Model):
     away_team_total_corners_conceded = models.IntegerField()
     home_team_total_corners_conceded_as_home = models.IntegerField()
     away_team_total_corners_conceded_as_away = models.IntegerField()
+    home_team_total_yellow_cards = models.IntegerField()
+    away_team_total_yellow_cards = models.IntegerField()
+    home_team_total_yellow_cards_as_home = models.IntegerField()
+    away_team_total_yellow_cards_as_away = models.IntegerField()
+    home_team_total_yellow_cards_conceded = models.IntegerField()
+    away_team_total_yellow_cards_conceded = models.IntegerField()
+    home_team_total_yellow_cards_conceded_as_home = models.IntegerField()
+    away_team_total_yellow_cards_conceded_as_away = models.IntegerField()
+    home_team_total_red_cards = models.IntegerField()
+    away_team_total_red_cards = models.IntegerField()
+    home_team_total_red_cards_as_home = models.IntegerField()
+    away_team_total_red_cards_as_away = models.IntegerField()
+    home_team_total_red_cards_conceded = models.IntegerField()
+    away_team_total_red_cards_conceded = models.IntegerField()
+    home_team_total_red_cards_conceded_as_home = models.IntegerField()
+    away_team_total_red_cards_conceded_as_away = models.IntegerField()
 
 
 class Referee(models.Model):

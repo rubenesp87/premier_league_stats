@@ -7,6 +7,19 @@ from football.common.match import get_or_create_match_stats
 from football.common.referee import get_or_create_referee_stats
 from football.models import Totals
 
+CSV_FILES = [
+    "football/data/2010.csv",
+    "football/data/2011.csv",
+    "football/data/2012.csv",
+    "football/data/2013.csv",
+    "football/data/2014.csv",
+    "football/data/2015.csv",
+    "football/data/2016.csv",
+    "football/data/2017.csv",
+    "football/data/2018.csv",
+    "football/data/2019.csv",
+]
+
 
 class Command(BaseCommand):
     help = 'Populate football data'
@@ -55,25 +68,48 @@ class Command(BaseCommand):
         self.team_total_corners_conceded = {}
         self.home_team_total_corners_conceded = {}
         self.away_team_total_corners_conceded = {}
+        # Total yellow cards
+        self.team_total_yellow_cards = {}
+        self.home_total_yellow_cards = {}
+        self.away_total_yellow_cards = {}
+        # Total yellow cards conceded
+        self.team_total_yellow_cards_conceded = {}
+        self.home_total_yellow_cards_conceded = {}
+        self.away_total_yellow_cards_conceded = {}
+        # Total red cards
+        self.team_total_red_cards = {}
+        self.home_total_red_cards = {}
+        self.away_total_red_cards = {}
+        # Total red cards conceded
+        self.team_total_red_cards_conceded = {}
+        self.home_total_red_cards_conceded = {}
+        self.away_total_red_cards_conceded = {}
         super(Command, self).__init__(*args, **kwargs)
 
     def handle(self, *args, **options):
-        path = os.path.join(settings.BASE_DIR, "football/data/2010.csv")
-        with open(path) as f:
-            reader = csv.reader(f)
+        try:
+            for file in CSV_FILES:
+                print("Importing: " + file)
+                path = os.path.join(settings.BASE_DIR, file)
+                with open(path) as f:
+                    reader = csv.reader(f)
 
-            if not valid_legend(next(reader)):
-                raise Exception()
+                    if not valid_legend(next(reader)):
+                        raise Exception()
 
-            for row in reader:
-                self.get_total_goals(row)
-                self.get_total_shots(row)
-                self.get_total_fouls_commited(row)
-                self.get_total_corners(row)
-                match, match_created = get_or_create_match_stats(row)
-                if match_created:
-                    self.get_or_create_total_stats(row, match)
-                    get_or_create_referee_stats(row)
+                    for row in reader:
+                        self.get_total_goals(row)
+                        self.get_total_shots(row)
+                        self.get_total_fouls_commited(row)
+                        self.get_total_corners(row)
+                        self.get_total_cards(row)
+                        match, match_created = get_or_create_match_stats(row)
+                        if match_created:
+                            self.get_or_create_total_stats(row, match)
+                            get_or_create_referee_stats(row)
+        except Exception as e:
+            print(e)
+            print(row)
 
     def get_total_goals(self, row):
         # Total goals team
@@ -155,6 +191,32 @@ class Command(BaseCommand):
         self.home_team_total_corners_conceded[row[2]] = self.home_team_total_corners_conceded.get(row[2], 0) + int(row[18])
         self.away_team_total_corners_conceded[row[3]] = self.away_team_total_corners_conceded.get(row[3], 0) + int(row[17])
 
+    def get_total_cards(self, row):
+        # Total yellow cards team
+        self.team_total_yellow_cards[row[2]] = self.team_total_yellow_cards.get(row[2], 0) + int(row[19])
+        self.team_total_yellow_cards[row[3]] = self.team_total_yellow_cards.get(row[3], 0) + int(row[20])
+        # Total yellow cards home / away
+        self.home_total_yellow_cards[row[2]] = self.home_total_yellow_cards.get(row[2], 0) + int(row[19])
+        self.away_total_yellow_cards[row[3]] = self.away_total_yellow_cards.get(row[3], 0) + int(row[20])
+        # Total yellow cards team conceded
+        self.team_total_yellow_cards_conceded[row[2]] = self.team_total_yellow_cards_conceded.get(row[2], 0) + int(row[20])
+        self.team_total_yellow_cards_conceded[row[3]] = self.team_total_yellow_cards_conceded.get(row[3], 0) + int(row[19])
+        # Total yellow cards home / away conceded
+        self.home_total_yellow_cards_conceded[row[2]] = self.home_total_yellow_cards_conceded.get(row[2], 0) + int(row[20])
+        self.away_total_yellow_cards_conceded[row[3]] = self.away_total_yellow_cards_conceded.get(row[3], 0) + int(row[19])
+        # Total red cards team
+        self.team_total_red_cards[row[2]] = self.team_total_red_cards.get(row[2], 0) + int(row[21])
+        self.team_total_red_cards[row[3]] = self.team_total_red_cards.get(row[3], 0) + int(row[22])
+        # Total red cards home / away
+        self.home_total_red_cards[row[2]] = self.home_total_red_cards.get(row[2], 0) + int(row[21])
+        self.away_total_red_cards[row[3]] = self.away_total_red_cards.get(row[3], 0) + int(row[22])
+        # Total red cards team conceded
+        self.team_total_red_cards_conceded[row[2]] = self.team_total_red_cards_conceded.get(row[2], 0) + int(row[22])
+        self.team_total_red_cards_conceded[row[3]] = self.team_total_red_cards_conceded.get(row[3], 0) + int(row[21])
+        # Total red cards home / away conceded
+        self.home_total_red_cards_conceded[row[2]] = self.home_total_red_cards_conceded.get(row[2], 0) + int(row[22])
+        self.away_total_red_cards_conceded[row[3]] = self.away_total_red_cards_conceded.get(row[3], 0) + int(row[21])
+
     def get_or_create_total_stats(self, row, match):
         _, created = Totals.objects.get_or_create(
             match_id=match,
@@ -214,4 +276,20 @@ class Command(BaseCommand):
             away_team_total_corners_conceded=self.team_total_corners_conceded[row[3]],
             home_team_total_corners_conceded_as_home=self.home_team_total_corners_conceded[row[2]],
             away_team_total_corners_conceded_as_away=self.away_team_total_corners_conceded[row[3]],
+            home_team_total_yellow_cards=self.team_total_yellow_cards[row[2]],
+            away_team_total_yellow_cards=self.team_total_yellow_cards[row[3]],
+            home_team_total_yellow_cards_as_home=self.home_total_yellow_cards[row[2]],
+            away_team_total_yellow_cards_as_away=self.away_total_yellow_cards[row[3]],
+            home_team_total_yellow_cards_conceded=self.team_total_yellow_cards_conceded[row[2]],
+            away_team_total_yellow_cards_conceded=self.team_total_yellow_cards_conceded[row[3]],
+            home_team_total_yellow_cards_conceded_as_home=self.home_total_yellow_cards_conceded[row[2]],
+            away_team_total_yellow_cards_conceded_as_away=self.away_total_yellow_cards_conceded[row[3]],
+            home_team_total_red_cards=self.team_total_red_cards[row[2]],
+            away_team_total_red_cards=self.team_total_red_cards[row[3]],
+            home_team_total_red_cards_as_home=self.home_total_red_cards[row[2]],
+            away_team_total_red_cards_as_away=self.away_total_red_cards[row[3]],
+            home_team_total_red_cards_conceded=self.team_total_red_cards_conceded[row[2]],
+            away_team_total_red_cards_conceded=self.team_total_red_cards_conceded[row[3]],
+            home_team_total_red_cards_conceded_as_home=self.home_total_red_cards_conceded[row[2]],
+            away_team_total_red_cards_conceded_as_away=self.away_total_red_cards_conceded[row[3]],
         )
