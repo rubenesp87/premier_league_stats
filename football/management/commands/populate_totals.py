@@ -18,6 +18,7 @@ CSV_FILES = [
     "football/data/2017.csv",
     "football/data/2018.csv",
     "football/data/2019.csv",
+    "football/data/2020.csv",
 ]
 
 
@@ -109,7 +110,6 @@ class Command(BaseCommand):
                             get_or_create_referee_stats(row)
         except Exception as e:
             print(e)
-            print(row)
 
     def get_total_goals(self, row):
         # Total goals team
