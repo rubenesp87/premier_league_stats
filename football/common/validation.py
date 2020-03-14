@@ -1,48 +1,51 @@
 
 def valid_legend(row):
     # Validate order legend
+    field_error = []
     if row[1] != "Date":
-        return False
+        field_error.append(row[1])
     if row[2] != "HomeTeam":
-        return False
+        field_error.append(row[2])
     if row[3] != "AwayTeam":
-        return False
+        field_error.append(row[3])
     if row[4] != "FTHG":
-        return False
+        field_error.append(row[4])
     if row[5] != "FTAG":
-        return False
+        field_error.append(row[5])
     if row[6] != "FTR":
-        return False
+        field_error.append(row[6])
     if row[7] != "HTHG":
-        return False
+        field_error.append(row[7])
     if row[8] != "HTAG":
-        return False
+        field_error.append(row[8])
     if row[9] != "HTR":
-        return False
+        field_error.append(row[9])
     if row[10] != "Referee":
-        return False
+        field_error.append(row[10])
     if row[11] != "HS":
-        return False
+        field_error.append(row[11])
     if row[12] != "AS":
-        return False
+        field_error.append(row[12])
     if row[13] != "HST":
-        return False
+        field_error.append(row[13])
     if row[14] != "AST":
-        return False
+        field_error.append(row[14])
     if row[15] != "HF":
-        return False
+        field_error.append(row[15])
     if row[16] != "AF":
-        return False
+        field_error.append(row[16])
     if row[17] != "HC":
-        return False
+        field_error.append(row[17])
     if row[18] != "AC":
-        return False
+        field_error.append(row[18])
     if row[19] != "HY":
-        return False
+        field_error.append(row[19])
     if row[20] != "AY":
-        return False
+        field_error.append(row[20])
     if row[21] != "HR":
-        return False
+        field_error.append(row[21])
     if row[22] != "AR":
-        return False
+        field_error.append(row[22])
+    if len(field_error) > 0:
+        raise Exception('Field error: ' + ', '.join(field_error))
     return True
