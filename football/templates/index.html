@@ -1,0 +1,9 @@
+{% if latest_results %}
+    <ul>
+    {% for data in latest_results %}
+        <li>{{ data.home_team }} : {{ data.away_team }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No results available.</p>
+{% endif %}
